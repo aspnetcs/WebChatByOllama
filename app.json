@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/history/history",
+    "pages/login/login"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ededed",
+    "navigationBarTitleText": "Ollama AI 助手",
+    "navigationBarTextStyle": "black"
+  },
+  "networkTimeout": {
+    "request": 300000
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "globalData": {
+    "selectedConversationId": null
+  }
+}
+  

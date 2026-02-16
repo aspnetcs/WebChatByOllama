@@ -1,0 +1,213 @@
+<view class="container">
+  <!-- 顶部操作栏 -->
+  <view class="header-bar">
+    <button class="header-btn" bindtap="newChat">
+      <text class="btn-icon">💬</text>
+      <text class="btn-text">新对话</text>
+    </button>
+    <button class="header-btn" bindtap="viewHistory">
+      <text class="btn-icon">📝</text>
+      <text class="btn-text">历史记录</text>
+    </button>
+  </view>
+
+  <!-- 聊天内容区域 -->
+  <scroll-view 
+    class="chat-scroll" 
+    scroll-y="true" 
+    scroll-into-view="{{scrollIntoView}}" 
+    scroll-with-animation="true">
+    
+    <block wx:for="{{chatList}}" wx:key="id">
+      <!-- 只显示非隐藏消息 -->
+      <block wx:if="{{!item.hidden}}">
+        <!-- 消息时间 -->
+        <view class="time-stamp" wx:if="{{index === 0 || chatList[index].time !== chatList[index-1].time}}">
+          {{item.time}}
+        </view>
+
+        <!-- 消息气泡 -->
+        <view class="message-group {{item.role === 'user' ? 'user-group' : 'bot-group'}}" id="{{item.id}}">
+
+          <!-- 机器人头像 -->
+          <view class="avatar bot-avatar" wx:if="{{item.role !== 'user'}}">🤖</view>
+
+          <!-- 消息内容 -->
+          <view class="bubble {{item.role === 'user' ? 'user-bubble' : 'bot-bubble'}}">
+            <!-- 显示图片 -->
+            <view class="message-images" wx:if="{{item.images.length > 0}}">
+              <image
+                wx:for="{{item.images}}"
+                wx:for-item="img"
+                wx:key="*this"
+                class="message-image"
+                src="data:image/jpeg;base64,{{img}}"
+                mode="widthFix"
+                bindtap="previewImage"
+                data-src="data:image/jpeg;base64,{{img}}"
+              ></image>
+            </view>
+
+            <!-- 显示文件 -->
+            <view class="message-files" wx:if="{{item.files.length > 0}}">
+              <view class="message-file" wx:for="{{item.files}}" wx:key="*this">
+                <view class="file-icon">📄</view>
+                <view class="file-info">
+                  <view class="file-name">{{item.name}}</view>
+                  <view class="file-size">{{item.size}}</view>
+                </view>
+              </view>
+            </view>
+
+            <!-- 显示文本内容 -->
+            <text user-select="true" wx:if="{{item.content && item.role === 'user'}}">{{item.content}}</text>
+            <!-- 使用towxml渲染AI回复的代码内容 -->
+            <towxml wx:if="{{item.role === 'assistant' && item.towxmlData}}" nodes="{{item.towxmlData}}" />
+            <text user-select="true" wx:if="{{item.role === 'system' && item.content}}">{{item.content}}</text>
+
+          </view>
+
+          <!-- 用户头像 -->
+          <view class="avatar user-avatar" wx:if="{{item.role === 'user'}}">👤</view>
+        </view>
+      </block>
+    </block>
+
+    <!-- Loading 状态 -->
+    <view class="loading-wrap" wx:if="{{isLoading}}">
+      <view class="loading-dots">
+        <view class="dot"></view>
+        <view class="dot"></view>
+        <view class="dot"></view>
+      </view>
+      <text>思考中...</text>
+    </view>
+    
+    <!-- 底部占位，防止内容被输入框遮挡 -->
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
+
+  <!-- 弹出菜单 -->
+  <view class="popup-menu" wx:if="{{showPopupMenu}}">
+    <view class="popup-mask" bindtap="togglePopupMenu"></view>
+    <view class="popup-content">
+      <view class="popup-item" bindtap="chooseImage">
+        <text class="popup-icon">🖼️</text>
+        <text class="popup-text">相册</text>
+      </view>
+      <view class="popup-item" bindtap="chooseFile">
+        <text class="popup-icon">📄</text>
+        <text class="popup-text">文本文件</text>
+      </view>
+      <view class="popup-item" bindtap="chooseAnyFile">
+        <text class="popup-icon">📑</text>
+        <text class="popup-text">文档转图片</text>
+      </view>
+      <view class="popup-item" bindtap="chooseVideo">
+        <text class="popup-icon">🎬</text>
+        <text class="popup-text">视频分片</text>
+      </view>
+      <view class="popup-item" bindtap="chooseAudioFile">
+        <text class="popup-icon">🎵</text>
+        <text class="popup-text">音频转文字</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部输入区域 -->
+  <view class="input-area">
+    <!-- 已选择的图片预览 -->
+    <view class="selected-images" wx:if="{{selectedImages.length > 0}}">
+      <view class="selected-image-container" wx:for="{{selectedImages}}" wx:key="*this">
+        <image 
+          class="selected-image" 
+          src="data:image/jpeg;base64,{{item}}" 
+          mode="aspectFill"
+        ></image>
+        <view class="remove-image" bindtap="removeImage" data-index="{{index}}">×</view>
+      </view>
+    </view>
+    
+    <!-- 已选择的文件预览 -->
+    <view class="selected-files" wx:if="{{selectedFiles.length > 0}}">
+      <view class="selected-file-container" wx:for="{{selectedFiles}}" wx:key="*this">
+        <view class="file-icon">📄</view>
+        <view class="file-info">
+          <view class="file-name">{{item.name}}</view>
+          <view class="file-size">{{item.size}}</view>
+        </view>
+        <view class="remove-file" bindtap="removeFile" data-index="{{index}}">×</view>
+      </view>
+    </view>
+    
+    <view class="input-row">
+      <button class="plus-btn" bindtap="togglePopupMenu" disabled="{{isLoading}}">
+        +
+      </button>
+      <input
+        class="input-box" 
+        type="text" 
+        confirm-type="send"
+        value="{{inputValue}}" 
+        bindinput="handleInput" 
+        bindconfirm="sendMessage"
+        placeholder="输入消息..." 
+        disabled="{{isLoading}}"
+      />
+      <button 
+        class="send-btn {{(inputValue.length > 0 || selectedImages.length > 0 || selectedFiles.length > 0) ? 'active' : ''}}" 
+        bindtap="sendMessage" 
+        disabled="{{(!inputValue && selectedImages.length === 0 && selectedFiles.length === 0) || isLoading}}">
+        发送
+      </button>
+    </view>
+  </view>
+  <!-- 语言选择弹窗 -->
+  <view class="modal-mask" wx:if="{{showLanguageModal}}">
+    <view class="modal-container">
+      <view class="modal-header">
+        <text class="modal-title">选择音频语言</text>
+      </view>
+
+      <view class="modal-body">
+        <!-- 常用语言 -->
+        <view class="language-list">
+          <block wx:for="{{commonLanguages}}" wx:key="code">
+            <view
+                    class="language-item {{selectedLanguage === item.code ? 'selected' : ''}}"
+                    bindtap="selectLanguage"
+                    data-language="{{item.code}}"
+            >
+              <text>{{item.name}}</text>
+              <icon wx:if="{{selectedLanguage === item.code}}" type="success" size="20"></icon>
+            </view>
+          </block>
+
+          <!-- 展开/收起全部语言按钮 -->
+          <view class="toggle-all" bindtap="toggleAllLanguages">
+            <text>{{showAllLanguages ? '收起' : '查看全部语言'}}</text>
+            <icon type="{{showAllLanguages ? 'arrow-up' : 'arrow-down'}}" size="16"></icon>
+          </view>
+
+          <!-- 全部语言列表 -->
+          <block wx:if="{{showAllLanguages}}" wx:for="{{allLanguages}}" wx:key="code">
+            <view
+                    class="language-item {{selectedLanguage === item.code ? 'selected' : ''}}"
+                    bindtap="selectLanguage"
+                    data-language="{{item.code}}"
+            >
+              <text>{{item.name}}</text>
+              <icon wx:if="{{selectedLanguage === item.code}}" type="success" size="20"></icon>
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-cancel" bindtap="closeLanguageModal">取消</button>
+        <button class="modal-confirm" bindtap="confirmLanguage">确认</button>
+      </view>
+    </view>
+  </view>
+
+</view>

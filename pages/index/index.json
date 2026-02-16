@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "Ollama AI 助手",
+  "usingComponents": {
+    "towxml": "../../towxml/towxml"
+  }
+}

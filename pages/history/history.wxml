@@ -1,0 +1,33 @@
+<!--pages/history/history.wxml-->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">历史记录</text>
+    <button class="clear-btn" bindtap="clearAllHistory">清空历史</button>
+  </view>
+
+  <!-- 历史记录列表 -->
+  <scroll-view class="history-scroll" scroll-y="true">
+    <view class="history-list">
+      <block wx:if="{{conversations.length > 0}}">
+        <view class="history-item" wx:for="{{conversations}}" wx:key="id" bindtap="loadConversation" data-id="{{item.id}}">
+          <view class="item-header">
+            <text class="item-title">{{item.title}}</text>
+            <text class="item-time">{{item.updateTimeFormatted}}</text>
+          </view>
+          <view class="item-preview">
+            <text class="preview-text">{{item.preview}}</text>
+          </view>
+          <view class="item-actions">
+            <button class="action-btn delete-btn" catchtap="deleteConversation" data-id="{{item.id}}">删除</button>
+          </view>
+        </view>
+      </block>
+      
+      <view class="empty-state" wx:else>
+        <text class="empty-text">暂无历史记录</text>
+        <button class="back-btn" bindtap="goBack">返回聊天</button>
+      </view>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,131 @@
+/* pages/history/history.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 页面标题 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.clear-btn {
+  padding: 10rpx 20rpx;
+  font-size: 24rpx;
+  color: #ff4d4f;
+  background-color: transparent;
+  border: 1rpx solid #ff4d4f;
+  border-radius: 8rpx;
+}
+
+/* 历史记录滚动区域 */
+.history-scroll {
+  flex: 1;
+  padding: 20rpx 0;
+}
+
+/* 历史记录列表 */
+.history-list {
+  padding: 0 20rpx;
+}
+
+/* 历史记录项 */
+.history-item {
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.item-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 20rpx;
+}
+
+.item-preview {
+  margin-bottom: 16rpx;
+}
+
+.preview-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.item-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+  margin-left: 16rpx;
+}
+
+.delete-btn {
+  color: #ff4d4f;
+  background-color: rgba(255, 77, 79, 0.1);
+  border: 1rpx solid rgba(255, 77, 79, 0.3);
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-text {
+  font-size: 30rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.back-btn {
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  color: #07c160;
+  background-color: rgba(7, 193, 96, 0.1);
+  border: 1rpx solid rgba(7, 193, 96, 0.3);
+  border-radius: 8rpx;
+}

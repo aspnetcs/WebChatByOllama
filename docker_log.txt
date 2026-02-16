@@ -1,0 +1,56 @@
+常用命令：
+Ctrl + P （松开）然后马上按 Ctrl + Q    退出容器并保持容器运行
+docker start WebChatByOllamaServer   启动容器
+docker exec -it WebChatByOllamaServer /bin/bash  进入容器
+docker stop WebChatByOllamaServer
+
+
+开始：
+
+docker run \
+    --name WebChatByOllamaServer \
+    --hostname docker-WebChatByOllamaServer \
+    -v "/home/heternal/heternal:/tmp/heternal" \
+    -p 59179:8080 \
+    --shm-size=8G \
+    -it \
+    ubuntu:24.04 \
+    /bin/bashy
+
+
+apt update
+
+apt install -y wget curl ffmpeg nano 
+
+安装配置yazi
+下载  
+openjdk-25.0.1_linux-x64_bin.tar.gz
+apache-maven-3.9.12-bin.zip 
+
+解压缩  
+tar -xvf openjdk-25.0.1_linux-x64_bin.tar.gz 
+unzip apache-maven-3.9.12-bin.zip 
+ 
+配置环境变量，写入       .bashrc
+export JAVA_HOME=/root/environment/jdk-25.0.1
+export MAVEN_HOME=/root/environment/apache-maven-3.9.12
+export PATH=$MAVEN_HOME/bin:$PATH
+export PATH=$JAVA_HOME/bin:$PATH
+
+加载.bashrc
+source /root/.bashrc
+
+配置maven
+修改文件 settings.xml
+主要是镜像源和本地仓库位置，这里从我的电脑复制过去apache-maven-3.9.12/conf/settings.xml
+================================
+
+启动项目
+
+cd /tmp/heternal/chatserver
+
+mvn spring-boot:run
+
+端口映射：
+容器：本机：公网服务器
+8080:59179：59176，放开防火墙。
